@@ -45,7 +45,8 @@
     "react-error-boundary": "^6.1.0",
     "react-router": "^5.3.4",
     "react-router-dom": "^5.3.4",
-    "react-signature-canvas": "^1.1.0-alpha.2"
+    "react-signature-canvas": "^1.1.0-alpha.2",
+    "socialcalc-ai": "^1.1.2"
   },
   "devDependencies": {
     "@capacitor/assets": "^3.0.5",
