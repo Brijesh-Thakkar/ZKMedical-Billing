@@ -25,7 +25,7 @@ import {
   folder,
   add,
 } from "ionicons/icons";
-import { ipfsService } from "../services/ipfs-service";
+import { getStorage } from "../services/storage";
 import { IpfsCloudModal } from "../components/IpfsCloudModal";
 import "./SocialCalcPage.css";
 import FileOptions from "../components/InvoicePage/FileMenu/FileOptions";
@@ -1303,8 +1303,12 @@ const SocialCalcPage: React.FC = () => {
       setToastColor("success");
       setShowToast(true);
 
-      const result = await ipfsService.pinToIpfs(invoiceForIpfs as any);
-      const cid = result.IpfsHash;
+      const saved = await getStorage((msg) => {
+        setToastMessage(msg);
+        setToastColor("warning");
+        setShowToast(true);
+      }).save(invoiceForIpfs.name, new TextEncoder().encode(JSON.stringify(invoiceForIpfs)));
+      const cid = saved.id;
 
       // Save to pinned history
       try {
@@ -1415,8 +1419,12 @@ const SocialCalcPage: React.FC = () => {
       setToastColor("success");
       setShowToast(true);
 
-      const result = await ipfsService.pinToIpfs(invoiceForIpfs as any);
-      const cid = result.IpfsHash;
+      const saved = await getStorage((msg) => {
+        setToastMessage(msg);
+        setToastColor("warning");
+        setShowToast(true);
+      }).save(invoiceForIpfs.name, new TextEncoder().encode(JSON.stringify(invoiceForIpfs)));
+      const cid = saved.id;
 
       // Save to pinned history
       try {
