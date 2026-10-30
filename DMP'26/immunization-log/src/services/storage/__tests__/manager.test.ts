@@ -63,6 +63,15 @@ describe("StorageManager", () => {
     expect(notify).toHaveBeenCalled();
   });
 
+  it("loads an S3-fallback save from S3 when Helia is back but does not have the CID", async () => {
+    const { mgr, providers } = setup("helia", { helia: { load: vi.fn(async () => { throw new StorageError("not_found", "404", 404); }) } });
+    await mgr.save("n", text("x"));
+    providers.s3.saved.push(providers.helia.saved[0]);
+    const r = await mgr.load("cid");
+    expect(r.provider).toBe("s3");
+    expect(new TextDecoder().decode(r.data)).toBe("x");
+  });
+
   it("does not fall back for non-connectivity errors", async () => {
     const { mgr, providers, notify } = setup("helia", { helia: { save: vi.fn(async () => { throw new StorageError("http", "413", 413); }) } });
     await expect(mgr.save("n", text("x"))).rejects.toMatchObject({ kind: "http" });

@@ -61,9 +61,13 @@ export class StorageManager {
     try {
       bytes = await primary.load(id);
     } catch (e) {
-      if (primary.id !== "helia" || !(e instanceof StorageError) || e.kind !== "unreachable") throw e;
+      // not_found too: a save that fell back to S3 leaves a CID Helia has never seen.
+      const retry = e instanceof StorageError && (e.kind === "unreachable" || e.kind === "not_found");
+      if (primary.id !== "helia" || !retry) throw e;
       used = this.deps.providers.s3;
-      this.deps.notify?.("Helia is unreachable. Loading from S3 instead.");
+      this.deps.notify?.(
+        e.kind === "not_found" ? "Not found on Helia. Trying S3 instead." : "Helia is unreachable. Loading from S3 instead.",
+      );
       bytes = await used.load(id);
     }
     // Everything this app stores is EMSH-framed; decrypt() rejects anything else.
