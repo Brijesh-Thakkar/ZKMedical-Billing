@@ -49,6 +49,12 @@ describe("EMSH encryption", () => {
     await expect(decrypt(blob, "pw")).rejects.toThrow(/unsafe iteration/);
   });
 
+  it("rejects a zero iteration count in a crafted header with a StorageError", async () => {
+    const blob = await encrypt(text("x"), { password: "pw", iterations: FAST });
+    new DataView(blob.buffer).setUint32(5, 0, false);
+    await expect(decrypt(blob, "pw")).rejects.toMatchObject({ kind: "crypto" });
+  });
+
   it("rejects empty passphrase and low iteration counts", async () => {
     await expect(encrypt(text("x"), { password: "" })).rejects.toThrow();
     await expect(encrypt(text("x"), { password: "pw", iterations: 10 })).rejects.toThrow();

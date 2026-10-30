@@ -79,7 +79,7 @@ export async function decrypt(data: Uint8Array, password: string): Promise<Uint8
   if (!password) throw new StorageError("crypto", "password must be a non-empty string");
 
   const iterations = new DataView(data.buffer, data.byteOffset, data.byteLength).getUint32(OFF_ITERATIONS, false);
-  if (iterations > MAX_DECRYPT_ITERATIONS) {
+  if (iterations < 1 || iterations > MAX_DECRYPT_ITERATIONS) {
     throw new StorageError("crypto", `Encrypted payload has an unsafe iteration count (${iterations})`);
   }
   const salt = data.slice(OFF_SALT, OFF_NONCE);
