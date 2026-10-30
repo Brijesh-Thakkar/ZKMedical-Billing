@@ -15,6 +15,7 @@ import {
   arrowRedo,
   colorPaletteOutline,
   saveOutline,
+  cloudUploadOutline,
 } from "ionicons/icons";
 import * as AppGeneral from "../socialcalc/index.js";
 
@@ -32,6 +33,7 @@ interface FileOptionsProps {
   showColorModal: boolean;
   setShowColorPicker: (show: boolean) => void;
   fileName: string;
+  onSaveToIpfs?: () => void;
 }
 
 const FileOptions: React.FC<FileOptionsProps> = ({
@@ -39,6 +41,7 @@ const FileOptions: React.FC<FileOptionsProps> = ({
   setShowActionsPopover,
   setShowColorPicker,
   fileName,
+  onSaveToIpfs,
 }) => {
 
   const [showToast, setShowToast] = useState(false);
@@ -269,6 +272,13 @@ const FileOptions: React.FC<FileOptionsProps> = ({
               <IonIcon icon={saveOutline} slot="start" />
               <IonLabel>Save As</IonLabel>
             </IonItem>
+
+            {onSaveToIpfs && (
+              <IonItem button onClick={() => { setShowActionsPopover(false); onSaveToIpfs(); }} detail={false}>
+                <IonIcon icon={cloudUploadOutline} slot="start" style={{ color: '#10b981' }} />
+                <IonLabel style={{ color: '#10b981', fontWeight: '500' }}>Save to IPFS</IonLabel>
+              </IonItem>
+            )}
 
 
 
