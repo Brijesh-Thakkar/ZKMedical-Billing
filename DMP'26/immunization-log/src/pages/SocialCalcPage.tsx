@@ -15,7 +15,7 @@ import {
   isPlatform,
 } from "@ionic/react";
 import React, { useEffect, useState, useRef } from "react";
-import * as AppGeneral from "../components/InvoicePage/socialcalc/index.js";
+import * as AppGeneral from "socialcalc-ai";
 import { File } from "../components/Storage/LocalStorage";
 import {
   closeOutline,
@@ -33,8 +33,8 @@ import { useInvoice } from "../contexts/InvoiceContext";
 import { localTemplateService } from "../services/local-template-service";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import CellEditModal from "../components/InvoicePage/CellEditModal/CellEditModal";
-import { setupMouseListener, setupCellChangeListener } from "../components/InvoicePage/socialcalc/modules/listeners";
-import { enableTouchScroll, disableTouchScroll } from "../components/InvoicePage/socialcalc/modules/touch-scroll.js";
+import { setupMouseListener, setupCellChangeListener } from "socialcalc-ai";
+import { enableTouchScroll, disableTouchScroll } from "socialcalc-ai";
 import {
   generateEditableCells,
   extractTotalFromCell,
@@ -145,20 +145,17 @@ const SocialCalcPage: React.FC = () => {
 
   // Setup SocialCalc mouse listener for custom cell editing
   useEffect(() => {
-    let cleanupFn: (() => void) | undefined;
-
     const intervalId = setInterval(() => {
       const sc = (window as any).SocialCalc;
       if (sc && sc.ProcessEditorMouseDown) {
         clearInterval(intervalId);
-        // console.log("🖱️ Setup mouse listener for custom editing");
-        cleanupFn = setupMouseListener();
+        // socialcalc-ai installs this patch once, globally; it has no cleanup handle.
+        setupMouseListener();
       }
     }, 500);
 
     return () => {
       clearInterval(intervalId);
-      if (cleanupFn) cleanupFn();
     };
   }, []);
 
